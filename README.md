@@ -31,12 +31,12 @@ flowchart LR
 
 | Metric | Value |
 |--------|-------|
-| Direction Accuracy | 54.7% (calibrated) |
-| Overfit Ratio | 0.87 |
-| Test R2 | -0.018 |
-| Features | 15 (after automated selection) |
-| Trees | 145 (early stopping) |
-| Dataset | ~10,700 samples, ~436 companies |
+| Direction Accuracy | 53.4% (calibrated) |
+| Overfit Ratio | 0.88 |
+| Test R2 | -0.032 |
+| Features | 23 (after automated selection) |
+| Trees | 72 (Optuna-selected) |
+| Dataset | ~10,800 samples, 436 companies |
 
 ![Prediction Analysis](results/prediction_analysis.png)
 
@@ -118,9 +118,11 @@ stock-prediction-ml/
 
    ![Feature Importance](results/feature_importance.png)
 
-4. **Model Training** - Temporal train/test split ensures the model is only evaluated on future data. Expanding-window time-series cross-validation with 5 folds. Hyperparameter tuning via Optuna Bayesian optimization (150 trials) with early stopping. Huber loss objective for robustness to outliers.
+4. **Model Training** - Temporal train/test split ensures the model is only evaluated on future data. Expanding-window time-series cross-validation with 5 folds. Hyperparameter tuning via Optuna Bayesian optimization (150 trials), with `n_estimators` tuned directly by Optuna rather than early stopping (more reliable on noisy financial data). Huber loss objective for robustness to outliers.
 
-5. **Analysis** - Evaluated using RMSE, R2, MAE, overfit ratio, Spearman rank correlation, and directional accuracy. Includes Optuna-tuned binary classifier for direction prediction.
+5. **Prediction Calibration** - Huber loss with heavy regularization makes the regressor very conservative; raw predictions cluster tightly near zero (std ≈ 0.004 vs actual return std ≈ 0.14), so noise pushes most predictions to the wrong side of the zero line and direction accuracy collapses to 43% (worse than random). A variance-matching affine transform — `(pred - pred_mean) × (train_std / pred_std) + train_mean` — rescales predictions to match the training-set distribution. This preserves rank order (Spearman correlation unchanged) but unsquashes magnitudes across the zero line, lifting direction accuracy from 43% → 53%. The tradeoff is that R² gets *more* negative (squared errors grow with prediction magnitude); this is the headline tradeoff visualized in the model results chart at the top of this README.
+
+6. **Analysis** - Evaluated using RMSE, R2, MAE, overfit ratio, Spearman rank correlation, and directional accuracy. Includes Optuna-tuned logistic regression classifier for direction prediction.
 
 ## Reproducing Results
 
