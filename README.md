@@ -11,7 +11,7 @@ Predicting quarterly S&P 500 stock returns using financial fundamentals, technic
 
 ## Overview
 
-This project builds an XGBoost regression model to predict next-quarter excess stock returns (vs S&P 500 benchmark) based on features derived from real SEC EDGAR filings, technical price indicators, FRED macroeconomic data, and sector-relative metrics. The model is trained on ~436 S&P 500 companies using quarterly data from 2005-2026, with a temporal train/test split to prevent data leakage. Hyperparameters are tuned via Optuna Bayesian optimization with expanding-window time-series cross-validation.
+This project builds an XGBoost regression model to predict next-quarter excess stock returns (vs S&P 500 benchmark) based on features derived from real SEC EDGAR filings, technical price indicators, FRED macroeconomic data, and sector-relative metrics. The model is trained on ~488 S&P 500 companies using quarterly data from 2008-2026, with a temporal train/test split to prevent data leakage. Hyperparameters are tuned via Optuna Bayesian optimization with expanding-window time-series cross-validation.
 
 ## Pipeline
 
@@ -31,12 +31,12 @@ flowchart LR
 
 | Metric | Value |
 |--------|-------|
-| Direction Accuracy | 53.4% (calibrated) |
-| Overfit Ratio | 0.88 |
-| Test R2 | -0.032 |
-| Features | 23 (after automated selection) |
-| Trees | 72 (Optuna-selected) |
-| Dataset | ~10,800 samples, 436 companies |
+| Direction Accuracy | 53.0% (calibrated) |
+| Overfit Ratio | 0.85 |
+| Test R2 | -0.016 |
+| Features | 21 (after automated selection) |
+| Trees | 51 (Optuna-selected) |
+| Dataset | ~12,150 samples, 488 companies |
 
 ![Prediction Analysis](results/prediction_analysis.png)
 
@@ -167,7 +167,7 @@ python scripts/extract_financials.py    # SEC EDGAR XBRL filings -> data/financi
 
 ### 3. Feature engineering (~3 min, local)
 
-Run [notebook 02](notebooks/02_feature_engineering.ipynb) top-to-bottom. Produces `data/processed_dataset.csv` (~10,700 quarterly samples × ~50 features).
+Run [notebook 02](notebooks/02_feature_engineering.ipynb) top-to-bottom. Produces `data/processed_dataset.csv` (~12,150 quarterly samples × ~50 features).
 
 ### 4. Model training (~30–60 min)
 
