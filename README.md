@@ -134,7 +134,7 @@ End-to-end runbook from a clean checkout.
 - **Python 3.12+**
 - **FRED API key** — free at [fred.stlouisfed.org](https://fred.stlouisfed.org/). Save as `FRED_API_KEY=...` in a `.env` file at the project root.
 - **SEC EDGAR bulk data** — fetched automatically by `scripts/download_sec_edgar.py` (~1.5 GB compressed, ~15 GB extracted, ~13,000 JSON files). Optionally set `SEC_USER_AGENT="Your Name your@email.com"` to identify SEC requests with your contact info; otherwise a generic project-repo identifier is used.
-- **Google Colab account** with GPU runtime (for notebook 03 only).
+- **Google Colab account** (*optional*) — convenient for portable training; local Jupyter execution is also supported (notebook 03 auto-detects).
 
 > **Note**: `data/` and `models/` artifacts are not checked into git. Each step below must be re-run per machine.
 
@@ -169,9 +169,14 @@ python scripts/extract_financials.py    # SEC EDGAR XBRL filings -> data/financi
 
 Run [notebook 02](notebooks/02_feature_engineering.ipynb) top-to-bottom. Produces `data/processed_dataset.csv` (~10,700 quarterly samples × ~50 features).
 
-### 4. Model training (~30–60 min, Google Colab with GPU)
+### 4. Model training (~30–60 min)
 
-Upload [notebook 03](notebooks/03_model_training.ipynb) to Google Colab, switch the runtime to GPU, and run all cells. Saves `models/model_results.pkl` containing the trained XGBoost model, predictions, and metrics.
+Notebook 03 auto-detects whether it's running in Colab or locally and resolves data/model paths accordingly:
+
+- **Local Jupyter**: `jupyter notebook notebooks/03_model_training.ipynb` and run all cells. Reads from `data/processed_dataset.csv`, writes to `models/model_results.pkl`.
+- **Google Colab**: upload the notebook, mount Drive at `/content/drive/MyDrive/stock_prediction_data/`, place `processed_dataset.csv` there, and run all cells. The notebook auto-installs `xgboost` and `optuna`.
+
+Note: training currently runs on **CPU** (no `tree_method='gpu_hist'` set). With ~10k samples × 23 features × 150 Optuna trials, CPU is competitive — GPU overhead would likely make it slower at this scale.
 
 ### 5. Analysis (~2 min, local)
 
@@ -234,4 +239,4 @@ pytest tests/ -v --cov=src
 - **Data**: pandas, NumPy, yfinance, fredapi
 - **Visualization**: matplotlib, seaborn
 - **Quality**: pytest, black, isort, flake8, mypy, pip-audit
-- **Infra**: GitHub Actions (CI), Docker, Google Colab (GPU training), Codecov
+- **Infra**: GitHub Actions (CI), Docker, Google Colab (optional), Codecov
