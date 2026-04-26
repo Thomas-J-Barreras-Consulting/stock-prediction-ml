@@ -13,7 +13,7 @@ Predicting quarterly S&P 500 stock returns using financial fundamentals, technic
 
 This project builds an XGBoost regression model to predict next-quarter excess stock returns (vs S&P 500 benchmark) based on features derived from real SEC EDGAR filings, technical price indicators, FRED macroeconomic data, and sector-relative metrics. The model is trained on ~488 S&P 500 companies using quarterly data from 2008-2026, with a temporal train/test split to prevent data leakage. Hyperparameters are tuned via Optuna Bayesian optimization with expanding-window time-series cross-validation.
 
-## Pipeline
+## Machine Learning Pipeline
 
 ```mermaid
 flowchart LR
@@ -196,7 +196,7 @@ Run [notebook 04](notebooks/04_analysis.ipynb) to regenerate the charts in [resu
 - Ensemble methods combining multiple model architectures
 - Shorter prediction horizons (monthly) for more training samples
 
-## Engineering & MLOps
+## CI Pipeline
 
 The repo treats research code as production code. Every push runs a multi-job [GitHubActions pipeline](https://github.com/Thomas-J-Barreras-Consulting/stock-prediction-ml/actions) defined by [ci.yml](.github/workflows/ci.yml):
 
