@@ -198,7 +198,7 @@ Run [notebook 04](notebooks/04_analysis.ipynb) to regenerate the charts in [resu
 
 ## Engineering & MLOps
 
-The repo treats research code as production code. Every push runs a multi-job [GitHub Actions pipeline](.github/workflows/ci.yml):
+The repo treats research code as production code. Every push runs a multi-job [GitHubActions pipeline](https://github.com/Thomas-J-Barreras-Consulting/stock-prediction-ml/actions) defined by [ci.yml](.github/workflows/ci.yml):
 
 ```mermaid
 flowchart LR
